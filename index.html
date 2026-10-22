@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel do Inventário</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page" id="page">
+
+  <header class="top">
+    <div>
+      <h1>Inventário de Chromebooks</h1>
+      <p class="sub">Conferência dos Words ditados contra o sistema da prefeitura, carrinho por carrinho. Patrimônio e carregadores não foram conferidos, porque a exportação do sistema não traz esses dados.</p>
+    </div>
+    <div class="src">
+      <span class="muted" id="src-info">Procurando a planilha…</span>
+      <div class="src-btns">
+        <button class="btn" type="button" id="btn-reload">Recarregar</button>
+        <label class="btn" for="file-in">Escolher planilha</label>
+        <input type="file" id="file-in" accept=".xlsx,.xls" hidden>
+      </div>
+    </div>
+  </header>
+
+  <div class="msg" id="msg" hidden></div>
+
+  <main id="main" hidden>
+    <p class="take" id="takeaway"></p>
+
+    <section class="kpis" aria-label="Números principais">
+      <div class="kpi"><span class="l">Chromebooks contados</span><span class="v" id="k-contados">—</span><span class="n">nos Words, cada um uma vez</span></div>
+      <div class="kpi"><span class="l">Conferem com o sistema</span><span class="v" id="k-pct">—</span><span class="n" id="k-conf">—</span></div>
+      <div class="kpi"><span class="l">Casos abertos</span><span class="v" id="k-casos">—</span><span class="n" id="k-casos-n">—</span></div>
+      <div class="kpi"><span class="l">Usáveis agora</span><span class="v" id="k-usaveis">—</span><span class="n">sem tela quebrada, sem falha de ligar</span></div>
+      <div class="kpi"><span class="l">Fora de uso</span><span class="v" id="k-inutil">—</span><span class="n">quebrados ou que não ligam</span></div>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h2>O que o sistema diz de cada carrinho</h2>
+        <p class="muted">Cada Chromebook ditado no Word, comparado com o cadastro.</p>
+        <div class="legend" id="leg1"></div>
+        <div class="chart" id="chart1"></div>
+      </div>
+      <div class="card">
+        <h2>Estado de uso de cada carrinho</h2>
+        <p class="muted">Pelo que foi anotado ao ditar: tela quebrada, não liga, dobradiça e teclas.</p>
+        <div class="legend" id="leg2"></div>
+        <div class="chart" id="chart2"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="plano">
+      <div>
+        <h2>Plano de resolução</h2>
+        <p class="muted">Escolha um grupo para filtrar. Clique em uma linha para ver o passo a passo. Marque a caixa quando resolver. Os casos com "Sim" na coluna "Verificado?" da planilha já vêm marcados.</p>
+      </div>
+      <div class="groups" id="groups">
+        <button class="grp" type="button" data-g="sistema" aria-pressed="false">
+          <span class="v" id="g-sistema">—</span>
+          <span class="h">Atualizar a localização no sistema</span>
+          <span class="d">O N/S existe, mas está cadastrado em outro lugar. É só mudar o local.</span>
+          <span class="bar"><span id="b-sistema"></span></span>
+        </button>
+        <button class="grp" type="button" data-g="etiqueta" aria-pressed="false">
+          <span class="v" id="g-etiqueta">—</span>
+          <span class="h">Conferir a etiqueta do aparelho</span>
+          <span class="d">Provável erro de ditado ou letra final diferente. Olhar a etiqueta e corrigir.</span>
+          <span class="bar"><span id="b-etiqueta"></span></span>
+        </button>
+        <button class="grp" type="button" data-g="procurar" aria-pressed="false">
+          <span class="v" id="g-procurar">—</span>
+          <span class="h">Procurar o equipamento</span>
+          <span class="d">Está no sistema, mas não apareceu em nenhum Word. Pode estar com um professor.</span>
+          <span class="bar"><span id="b-procurar"></span></span>
+        </button>
+      </div>
+
+      <div class="tools">
+        <select id="f-cart" aria-label="Carrinho"></select>
+        <input type="search" id="f-q" placeholder="Buscar por N/S ou local" aria-label="Buscar">
+        <button class="chip" type="button" data-s="open" aria-pressed="true">Abertos</button>
+        <button class="chip" type="button" data-s="all" aria-pressed="false">Todos</button>
+        <button class="chip" type="button" data-s="done" aria-pressed="false">Resolvidos</button>
+        <span class="muted" id="f-count"></span>
+      </div>
+
+      <div class="detail" id="detail">
+        <span class="muted" id="d-empty">Clique em um caso da tabela para ver o que provavelmente aconteceu e o que conferir.</span>
+        <div id="d-body" hidden>
+          <div class="hd" id="d-head"></div>
+          <div class="lbl">O que provavelmente aconteceu</div>
+          <p class="tx" id="d-porque"></p>
+          <div class="lbl">O que conferir</div>
+          <p class="tx" id="d-fazer"></p>
+        </div>
+      </div>
+
+      <div class="box">
+        <table id="casos-table">
+          <thead><tr>
+            <th>Resolvido</th><th>Caso</th><th>Carrinho</th><th>Nº no Word</th><th>Tipo</th><th>N/S no Word</th><th>N/S no sistema</th><th>Local no sistema</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec" id="atencao">
+      <div>
+        <h2>Para atenção: defeitos e patrimônios sem número</h2>
+        <p class="muted">Não são divergências com o sistema. São o que foi anotado ao ditar e precisa ser registrado ou consertado.</p>
+      </div>
+      <div class="tools">
+        <select id="a-cart" aria-label="Carrinho dos defeitos"></select>
+        <button class="chip" type="button" data-at="Defeito" aria-pressed="false">Defeitos</button>
+        <button class="chip" type="button" data-at="pat" aria-pressed="false">Sem patrimônio</button>
+        <span class="muted" id="a-count"></span>
+      </div>
+      <div class="box">
+        <table id="atencao-table">
+          <thead><tr><th>#</th><th>Carrinho</th><th>Nº</th><th>Tipo</th><th>N/S</th><th>O que foi informado</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

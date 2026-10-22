@@ -1,0 +1,28 @@
+PAINEL DO INVENTÁRIO (versão para o computador)
+
+O que tem nesta pasta
+  index.html, style.css, app.js ........ o painel
+  vendor/xlsx.full.min.js ................. biblioteca que lê o Excel (não precisa mexer)
+  Inventario_Carrinhos_conferido.xlsx ..... a planilha que o painel lê
+
+Como abrir
+  Opção 1 (mais simples): abra o index.html no navegador e clique em "Escolher planilha".
+          Selecione o Inventario_Carrinhos_conferido.xlsx.
+  Opção 2 (lê a planilha sozinho): abra a pasta com um servidor local.
+          Windows: dê dois cliques em iniciar.bat
+          Mac/Linux: no terminal, dentro da pasta, rode: python3 -m http.server 8000
+          e abra http://localhost:8000 no navegador.
+          (Precisa do Python instalado.)
+
+Como atualizar
+  Troque o arquivo .xlsx por uma versão nova, com o mesmo nome e as mesmas abas
+  (Resumo, Divergências e Conferência), e clique em "Recarregar" (ou em
+  "Escolher planilha", na opção 1).
+
+Marcar como resolvido
+  Os casos com "Sim" na coluna "Verificado?" da aba Divergências já aparecem marcados.
+  As caixas que você marcar no painel ficam salvas neste navegador, neste computador.
+  Para valer em todo lugar, marque "Sim" na planilha também.
+
+Observação
+  O painel não envia nada para a internet: tudo é lido e desenhado no seu navegador.
