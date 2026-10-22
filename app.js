@@ -3,6 +3,11 @@
   'use strict';
 
   var ARQUIVO = 'Inventario_Carrinhos_conferido.xlsx';
+  // Para mostrar outra planilha que esteja na mesma pasta: endereço-da-página/?arquivo=nome-do-arquivo.xlsx
+  try {
+    var pedido = new URLSearchParams(location.search).get('arquivo');
+    if (pedido && /^[\w .()\-]+\.xlsx$/i.test(pedido)) ARQUIVO = pedido;
+  } catch (e) { /* usa o nome padrão */ }
   var LS_KEY = 'painel-inventario-resolvidos';
   var $ = function (s) { return document.querySelector(s); };
   var NS = 'http://www.w3.org/2000/svg';
@@ -20,10 +25,11 @@
   function txt(v) { return v == null ? '' : String(v).trim(); }
   function num(v) { var n = Number(v); return isFinite(n) ? n : 0; }
 
+  function semAcento(t) { return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase(); }
   function rowsOf(wb, name) {
-    var ws = wb.Sheets[name];
-    if (!ws) throw new Error('A aba "' + name + '" não foi encontrada na planilha.');
-    return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+    var achada = wb.SheetNames.filter(function (n) { return semAcento(n) === semAcento(name); })[0];
+    if (!achada) throw new Error('A planilha não tem a aba "' + name + '". Abas encontradas: ' + (wb.SheetNames.join(', ') || 'nenhuma') + '. Escolha o arquivo Inventario_Carrinhos_conferido.xlsx.');
+    return XLSX.utils.sheet_to_json(wb.Sheets[achada], { header: 1, defval: null, raw: true });
   }
 
   function parse(wb) {
@@ -60,7 +66,7 @@
       if (!txt(q[0])) continue;
       items.push({ cart: txt(q[0]), n: txt(q[1]), key: txt(q[3]), status: txt(q[10]), obs: txt(q[12]) });
     }
-    if (!carts.length || !items.length) throw new Error('A planilha não tem o formato esperado (abas Resumo, Divergências e Conferência).');
+    if (!carts.length || !items.length) throw new Error('As abas existem, mas estão vazias ou fora do formato esperado (Resumo com a linha "Carrinho", e Conferência com a linha "Carrinho (Word)"). Use a planilha gerada pelo Claude, sem apagar linhas do cabeçalho.');
     return { carts: carts, cases: cases, att: att, items: items };
   }
 
@@ -250,6 +256,7 @@
 
   function usar(buffer, origem) {
     try {
+      if (typeof XLSX === 'undefined') throw new Error('A biblioteca vendor/xlsx.full.min.js não foi carregada. Confira se a pasta "vendor" foi enviada junto para o GitHub.');
       var wb = XLSX.read(buffer, { type: 'array' });
       D = parse(wb);
       mostrar(null); $('#main').hidden = false;
